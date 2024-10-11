@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Card Generator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .form-container {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+        }
+        .form-container h2 {
+            text-align: center;
+            color: #4a90e2;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .card-container {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+        .card {
+            background-color: transparent;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+        }
+        .card img {
+            margin-top: 20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            background-color: #f4f6f9;
+            object-fit: cover;
+        }
+        .card h3 {
+            margin-top: 15px;
+            color: #4a90e2;
+        }
+        .card p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .card .card-id {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .download-btn {
+            display: none;
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Form Container -->
+    <div class="form-container">
+        <h2>Enter Your Information</h2>
+        <form id="userForm">
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="cnic">CNIC/ID:</label>
+                <input type="text" id="cnic" name="cnic" placeholder="Enter your CNIC or ID" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" placeholder="Enter your address" required>
+            </div>
+            <div class="form-group">
+                <label for="imageUpload">Upload Image:</label>
+                <input type="file" id="imageUpload" accept="image/*">
+            </div>
+        </form>
+    </div>
+
+    <!-- Card Preview Container -->
+    <div class="card-container">
+        <div id="userCard" class="card">
+            <img id="cardImage" src="https://via.placeholder.com/100" alt="User Avatar">
+            <h3 id="cardName">Your Name</h3>
+            <p><strong>Card ID:</strong> <span id="cardID" class="card-id">XXXX-XXXXXXX-X</span></p>
+            <p><strong>Date of Birth:</strong> <span id="cardDOB">DD/MM/YYYY</span></p>
+            <p><strong>CNIC:</strong> <span id="cardCNIC">XXXX-XXXXXXX-X</span></p>
+            <p><strong>Address:</strong> <span id="cardAddress">Your Address</span></p>
+        </div>
+        <!-- Download Button -->
+        <button id="downloadCard" class="download-btn">Download Card</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    const form = document.getElementById('userForm');
+    const cardName = document.getElementById('cardName');
+    const cardID = document.getElementById('cardID');
+    const cardDOB = document.getElementById('cardDOB');
+    const cardCNIC = document.getElementById('cardCNIC');
+    const cardAddress = document.getElementById('cardAddress');
+    const cardImage = document.getElementById('cardImage');
+    const imageUpload = document.getElementById('imageUpload');
+    const downloadButton = document.getElementById('downloadCard');
+
+    form.addEventListener('input', function() {
+        const name = document.getElementById('name').value;
+        const dob = document.getElementById('dob').value;
+        const cnic = document.getElementById('cnic').value;
+        const address = document.getElementById('address').value;
+
+        const uniqueID = 'CARD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+        cardName.textContent = name || 'Your Name';
+        cardID.textContent = uniqueID;
+        cardDOB.textContent = dob || 'DD/MM/YYYY';
+        cardCNIC.textContent = cnic || 'XXXX-XXXXXXX-X';
+        cardAddress.textContent = address || 'Your Address';
+
+        downloadButton.style.display = 'block';
+    });
+
+    // Handle image upload
+    imageUpload.addEventListener('change', function(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            cardImage.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+
+    // Download the card as an HD image with a transparent background
+    downloadButton.addEventListener('click', function() {
+        html2canvas(document.getElementById('userCard'), {
+            backgroundColor: null, // Makes background transparent
+            scale: 2, // For higher resolution
+            useCORS: true, // Allows cross-origin images if needed
+        }).then(function(canvas) {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'user_card_hd.png';
+            link.click();
+        });
+    });
+</script>
+
+</body>
+</html>
+
